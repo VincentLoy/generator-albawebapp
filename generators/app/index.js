@@ -57,6 +57,15 @@ module.exports = yeoman.generators.Base.extend({
             },
             {
                 type: 'confirm',
+                name: 'jqueryByDefault',
+                message: 'do you want that app.js file load jQuery ?',
+                default: false,
+                when: function (answers) {
+                    return (answers.cssFramework !== 'no' || answers.includeJQuery === true);
+                }
+            },
+            {
+                type: 'confirm',
                 name: 'includeModernizr',
                 message: 'Would you want to use Mordernizr ?',
                 default: true
@@ -73,6 +82,7 @@ module.exports = yeoman.generators.Base.extend({
             this.includeJQuery = this.props.includeJQuery;
             this.includeModernizr = this.props.includeModernizr;
             this.includeLessHat = this.props.includeLessHat;
+            this.jqueryByDefault = this.props.jqueryByDefault;
 
             done();
         }.bind(this));
@@ -101,14 +111,62 @@ module.exports = yeoman.generators.Base.extend({
 
     writing: {
         app: function () {
+            var jsSourcePath;
+
             this.fs.copy(
                 this.templatePath('_package.json'),
                 this.destinationPath('package.json')
             );
-            /*this.fs.copy(
-                this.templatePath('_bower.json'),
-                this.destinationPath('bower.json')
-            );*/
+
+            this.fs.copy(
+                this.templatePath('_gulpfile.js'),
+                this.destinationPath('gulpfile.js')
+            );
+
+            this.fs.copy(
+                this.templatePath('less/_mixins.less'),
+                this.destinationPath('less/mixins.less')
+            );
+
+            this.fs.copy(
+                this.templatePath('less/_variables.less'),
+                this.destinationPath('less/variables.less')
+            );
+
+            /* APP.JS FILE */
+            if (this.isCountdown) {
+                if (this.jqueryByDefault) {
+                    jsSourcePath = 'js/_app_jquery_cd.js';
+                } else {
+                    jsSourcePath = 'js/_app_cd.js';
+                }
+                this.fs.copy(
+                    this.templatePath(jsSourcePath),
+                    this.destinationPath('js/app.js')
+                );
+            } else {
+                if (this.jqueryByDefault) {
+                    jsSourcePath = 'js/_app_jquery.js';
+                } else {
+                    jsSourcePath = 'js/_app.js';
+                }
+                this.fs.copy(
+                    this.templatePath(jsSourcePath),
+                    this.destinationPath('js/app.js')
+                );
+            }
+
+
+            var context = {
+                appName: null,
+                loadJQuery: null,
+                lessHat: this.includeLessHat === true ? '@import "../bower_components/lesshat/build/lesshat"' : null,
+                loadJS: '<script src="js/app.js"></script>',
+                loadCountdown: this.isCountdown ? '<script src="bower_components/simplycountdown.js/dist/simplyCountdown.js"></script>' : null
+            };
+
+            this.template("_countdown.html", "index.html", context, null);
+            this.template("less/_app.less", "less/app.less", context, null);
         },
 
         bower: function () {
