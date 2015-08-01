@@ -65,6 +65,16 @@ module.exports = yeoman.generators.Base.extend({
                 }
             },
             {
+                type: 'list',
+                name: 'resetCss',
+                message: 'Would you want to use a reset or normalize ?',
+                choices: [
+                    'no',
+                    'reset.css',
+                    'normalize.css'
+                ]
+            },
+            {
                 type: 'confirm',
                 name: 'includeModernizr',
                 message: 'Would you want to use Mordernizr ?',
@@ -83,6 +93,7 @@ module.exports = yeoman.generators.Base.extend({
             this.includeModernizr = this.props.includeModernizr;
             this.includeLessHat = this.props.includeLessHat;
             this.jqueryByDefault = this.props.jqueryByDefault;
+            this.resetCss = this.props.resetCss;
 
             done();
         }.bind(this));
@@ -156,12 +167,21 @@ module.exports = yeoman.generators.Base.extend({
                 );
             }
 
+            if (this.resetCss !== 'no') {
+                this.fs.copy(
+                    this.templatePath('css/' + this.resetCss),
+                    this.destinationPath('css/' + this.resetCss)
+                );
+            }
+
 
             var context = {
-                appName: this.appname,
+                appName: this.appName,
                 loadJQuery: this.jqueryByDefault === true ? '<script src="bower_components/jquery/dist/jquery.min.js"></script>' : null,
-                lessHat: this.includeLessHat === true ? '@import "../bower_components/lesshat/build/lesshat"' : null,
+                lessHat: this.includeLessHat === true ? '@import "../bower_components/lesshat/build/lesshat";' : null,
                 loadJS: '<script src="js/app.js"></script>',
+                resetCss: this.resetCss ? '<link rel="stylesheet" href="css/' + this.resetCss + '"/>' : null,
+                countdownDiv: this.isCountdown ? '<div class="countdown"></div>' : null,
                 loadCountdown: this.isCountdown ? '<script src="bower_components/simplycountdown.js/dist/simplyCountdown.min.js"></script>' : null
             };
 

@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title><%= appName %></title>
+
+    <%= resetCss %>
+    <link rel="stylesheet" href="css/app.css"/>
 </head>
 <body>
-<div class="countdown"></div>
-
     <h1>This is <%= appName %></h1>
+
+    <%= countdownDiv %>
 
     <%= loadJQuery %>
     <%= loadCountdown %>
