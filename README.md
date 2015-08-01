@@ -1,4 +1,6 @@
-# generator-albawebapp [![Build Status](https://secure.travis-ci.org/VincentLoy/generator-albawebapp.png?branch=master)](https://travis-ci.org/VincentLoy/generator-albawebapp)
+[WORK IN PROGRESS]
+
+# generator-albawebapp
 
 > [Yeoman](http://yeoman.io) generator
 
