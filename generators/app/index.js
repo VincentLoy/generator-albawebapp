@@ -177,16 +177,18 @@ module.exports = yeoman.generators.Base.extend({
 
             var context = {
                 appName: this.appName,
-                loadJQuery: this.jqueryByDefault === true ? '<script src="bower_components/jquery/dist/jquery.min.js"></script>' : null,
+                loadJQuery: this.jqueryByDefault === true ?
+                    '<script src="bower_components/jquery/dist/jquery.min.js"></script>' : null,
                 lessHat: this.includeLessHat === true ? '@import "../bower_components/lesshat/build/lesshat";' : null,
                 loadJS: '<script src="js/app.js"></script>',
                 resetCss: this.resetCss ? '<link rel="stylesheet" href="css/' + this.resetCss + '"/>' : null,
                 countdownDiv: this.isCountdown ? '<div class="countdown"></div>' : null,
-                loadCountdown: this.isCountdown ? '<script src="bower_components/simplycountdown.js/dist/simplyCountdown.min.js"></script>' : null
+                loadCountdown: this.isCountdown ?
+                    '<script src="bower_components/simplycountdown.js/dist/simplyCountdown.min.js"></script>' : null
             };
 
-            this.template("_index.html", "index.html", context, null);
-            this.template("less/_app.less", "less/app.less", context, null);
+            this.template('_index.html', 'index.html', context, null);
+            this.template('less/_app.less', 'less/app.less', context, null);
         },
 
         bower: function () {
