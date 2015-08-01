@@ -36,6 +36,12 @@ module.exports = yeoman.generators.Base.extend({
             },
             {
                 type: 'confirm',
+                name: 'includeLessHat',
+                message: 'Would you want to use lessHat ?',
+                default: true
+            },
+            {
+                type: 'confirm',
                 name: 'includeJQuery',
                 message: 'Would you like to include jQuery?',
                 default: true,
@@ -64,7 +70,9 @@ module.exports = yeoman.generators.Base.extend({
             this.cssFramework = this.props.cssFramework;
             this.includeModernizr = this.props.includeModernizr;
             this.isCountdown = this.props.isCountdown;
+            this.includeJQuery = this.props.includeJQuery;
             this.includeModernizr = this.props.includeModernizr;
+            this.includeLessHat = this.props.includeLessHat;
 
             done();
         }.bind(this));
@@ -112,7 +120,7 @@ module.exports = yeoman.generators.Base.extend({
 
             if (this.cssFramework !== 'no') {
                 if (this.includeBootstrapLess) {
-                    bowerJson.dependencies['bootstrap-less'] = '~3.3.5';
+                    bowerJson.dependencies['bootstrap-less'] = '~3.3.4';
                     bowerJson.overrides = {
                         'bootstrap-sass': {
                             'main': [
@@ -140,21 +148,30 @@ module.exports = yeoman.generators.Base.extend({
                     bowerJson.dependencies['foundation'] = '*';
 
                 } else if (this.includeMaterialize) {
-                    bowerJson.dependencies['materializecss'] = '*';
+                    bowerJson.dependencies['materialize'] = '*';
                 }
+
             } else if (this.includeJQuery) {
-                bowerJson.dependencies['jquery'] = '~2.1.1';
+                bowerJson.dependencies['jquery'] = '~2.1.2';
             }
 
             if (this.includeModernizr) {
                 bowerJson.dependencies['modernizr'] = '~2.8.1';
             }
 
+            if (this.includeLessHat) {
+                bowerJson.dependencies['lesshat'] = '~3.0.0';
+            }
+
+            if (this.isCountdown) {
+                bowerJson.dependencies['simplycountdown.js'] = '*';
+            }
+
             this.fs.writeJSON('bower.json', bowerJson);
-            this.fs.copy(
+            /*this.fs.copy(
                 this.templatePath('bowerrc'),
                 this.destinationPath('.bowerrc')
-            );
+            );*/
         },
 
         projectfiles: function () {
