@@ -168,10 +168,6 @@ module.exports = yeoman.generators.Base.extend({
             }
 
             this.fs.writeJSON('bower.json', bowerJson);
-            /*this.fs.copy(
-                this.templatePath('bowerrc'),
-                this.destinationPath('.bowerrc')
-            );*/
         },
 
         projectfiles: function () {

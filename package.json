@@ -1,13 +1,13 @@
 {
   "name": "generator-albawebapp",
   "version": "0.0.0",
-  "description": "Yeoman generator",
+  "description": "Yeoman generator that fit with AlbaPasta needs",
   "license": "MIT",
   "main": "app/index.js",
   "repository": "VincentLoy/generator-albawebapp",
   "author": {
     "name": "Vincent Loy",
-    "email": "",
+    "email": "vincent.loy1@gmail.com",
     "url": "https://github.com/VincentLoy"
   },
   "scripts": {
