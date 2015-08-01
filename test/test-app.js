@@ -8,8 +8,8 @@ var os = require('os');
 describe('albawebapp:app', function () {
   before(function (done) {
     helpers.run(path.join(__dirname, '../generators/app'))
-      .withOptions({ skipInstall: true })
-      .withPrompts({ someOption: true })
+      .withOptions({skipInstall: true})
+      .withPrompts({someOption: true})
       .on('end', done);
   });
 

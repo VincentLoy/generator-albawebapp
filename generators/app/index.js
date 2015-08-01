@@ -2,56 +2,170 @@
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
+var mkdirp = require('mkdirp');
+var _s = require('underscore.string');
 
 module.exports = yeoman.generators.Base.extend({
-  prompting: function () {
-    var done = this.async();
+    prompting: function () {
+        var done = this.async();
 
-    // Have Yeoman greet the user.
-    this.log(yosay(
-      'Welcome to the grand ' + chalk.red('Albawebapp') + ' generator!'
-    ));
+        // Have Yeoman greet the user.
+        this.log(yosay(
+            'Welcome to the grand ' + chalk.red('AlbaWebApp') + ' generator!'
+        ));
 
-    var prompts = [{
-      type: 'confirm',
-      name: 'someOption',
-      message: 'Would you like to enable this option?',
-      default: true
-    }];
 
-    this.prompt(prompts, function (props) {
-      this.props = props;
-      // To access props later use this.props.someOption;
+        var prompts = [
+            {
+                type: 'input',
+                name: 'appName',
+                message: 'First, tell me the name of your awesome project !',
+                default: this.appname
+            },
+            {
+                type: 'list',
+                name: 'cssFramework',
+                message: 'Would you want to use a CSS Framework ?',
+                choices: [
+                    'no',
+                    'bootstrap',
+                    'bootstrap-less',
+                    'foundation',
+                    'materializecss'
+                ]
+            },
+            {
+                type: 'confirm',
+                name: 'includeJQuery',
+                message: 'Would you like to include jQuery?',
+                default: true,
+                when: function (answers) {
+                    return (answers.cssFramework === 'no');
+                }
+            },
+            {
+                type: 'confirm',
+                name: 'isCountdown',
+                message: 'Tell me if you are making a countdown ?',
+                default: false
+            },
+            {
+                type: 'confirm',
+                name: 'includeModernizr',
+                message: 'Would you want to use Mordernizr ?',
+                default: true
+            }
+        ];
 
-      done();
-    }.bind(this));
-  },
+        this.prompt(prompts, function (props) {
+            this.props = props;
+            this.appName = this.props.appName;
+            this.addDemoSection = this.props.addDemoSection;
+            this.cssFramework = this.props.cssFramework;
+            this.includeModernizr = this.props.includeModernizr;
+            this.isCountdown = this.props.isCountdown;
+            this.includeModernizr = this.props.includeModernizr;
 
-  writing: {
-    app: function () {
-      this.fs.copy(
-        this.templatePath('_package.json'),
-        this.destinationPath('package.json')
-      );
-      this.fs.copy(
-        this.templatePath('_bower.json'),
-        this.destinationPath('bower.json')
-      );
+            done();
+        }.bind(this));
     },
 
-    projectfiles: function () {
-      this.fs.copy(
-        this.templatePath('editorconfig'),
-        this.destinationPath('.editorconfig')
-      );
-      this.fs.copy(
-        this.templatePath('jshintrc'),
-        this.destinationPath('.jshintrc')
-      );
-    }
-  },
+    scaffoldFolders: function () {
+        mkdirp('css');
+        mkdirp('less');
+        mkdirp('js');
+        mkdirp('js/lib');
+        mkdirp('fonts');
+        mkdirp('img');
+    },
 
-  install: function () {
-    this.installDependencies();
-  }
+    checkCssFramework: function () {
+        this.includeBootstrap = this.cssFramework === 'bootstrap';
+        this.includeBootstrapLess = this.cssFramework === 'bootstrap-less';
+        this.includeFoundation = this.cssFramework === 'foundation';
+        this.includeMaterialize = this.cssFramework === 'materializecss';
+    },
+
+    copyMainFiles: function () {
+
+    },
+
+
+    writing: {
+        app: function () {
+            this.fs.copy(
+                this.templatePath('_package.json'),
+                this.destinationPath('package.json')
+            );
+            /*this.fs.copy(
+                this.templatePath('_bower.json'),
+                this.destinationPath('bower.json')
+            );*/
+        },
+
+        bower: function () {
+            var bowerJson = {
+                name: _s.slugify(this.appname),
+                private: true,
+                dependencies: {}
+            };
+
+            if (this.cssFramework !== 'no') {
+                if (this.includeBootstrapLess) {
+                    bowerJson.dependencies['bootstrap-less'] = '~3.3.5';
+                    bowerJson.overrides = {
+                        'bootstrap-sass': {
+                            'main': [
+                                'assets/stylesheets/_bootstrap.scss',
+                                'assets/fonts/bootstrap/*',
+                                'assets/javascripts/bootstrap.js'
+                            ]
+                        }
+                    };
+
+                } else if (this.includeBootstrap) {
+                    bowerJson.dependencies['bootstrap'] = '~3.3.5';
+                    bowerJson.overrides = {
+                        'bootstrap': {
+                            'main': [
+                                'less/bootstrap.less',
+                                'dist/css/bootstrap.css',
+                                'dist/js/bootstrap.js',
+                                'dist/fonts/*'
+                            ]
+                        }
+                    };
+
+                } else if (this.includeFoundation) {
+                    bowerJson.dependencies['foundation'] = '*';
+
+                } else if (this.includeMaterialize) {
+                    bowerJson.dependencies['materializecss'] = '*';
+                }
+            } else if (this.includeJQuery) {
+                bowerJson.dependencies['jquery'] = '~2.1.1';
+            }
+
+            if (this.includeModernizr) {
+                bowerJson.dependencies['modernizr'] = '~2.8.1';
+            }
+
+            this.fs.writeJSON('bower.json', bowerJson);
+            this.fs.copy(
+                this.templatePath('bowerrc'),
+                this.destinationPath('.bowerrc')
+            );
+        },
+
+        projectfiles: function () {
+            this.fs.copy(
+                this.templatePath('editorconfig'),
+                this.destinationPath('.editorconfig')
+            );
+        }
+    },
+
+    install: function () {
+        this.installDependencies();
+    }
 });
