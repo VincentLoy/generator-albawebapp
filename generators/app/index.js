@@ -61,7 +61,7 @@ module.exports = yeoman.generators.Base.extend({
                 message: 'do you want that app.js file load jQuery ?',
                 default: false,
                 when: function (answers) {
-                    return (answers.cssFramework !== 'no' || answers.includeJQuery === true);
+                    return (answers.cssFramework !== 'no' || answers.includeJQuery === true);
                 }
             },
             {
@@ -158,14 +158,14 @@ module.exports = yeoman.generators.Base.extend({
 
 
             var context = {
-                appName: null,
-                loadJQuery: null,
+                appName: this.appname,
+                loadJQuery: this.jqueryByDefault === true ? '<script src="bower_components/jquery/dist/jquery.min.js"></script>' : null,
                 lessHat: this.includeLessHat === true ? '@import "../bower_components/lesshat/build/lesshat"' : null,
                 loadJS: '<script src="js/app.js"></script>',
-                loadCountdown: this.isCountdown ? '<script src="bower_components/simplycountdown.js/dist/simplyCountdown.js"></script>' : null
+                loadCountdown: this.isCountdown ? '<script src="bower_components/simplycountdown.js/dist/simplyCountdown.min.js"></script>' : null
             };
 
-            this.template("_countdown.html", "index.html", context, null);
+            this.template("_index.html", "index.html", context, null);
             this.template("less/_app.less", "less/app.less", context, null);
         },
 

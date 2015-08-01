@@ -1,7 +1,7 @@
 {
   "name": "generator-albawebapp",
-  "version": "0.0.0",
-  "description": "Yeoman generator that fit with AlbaPasta needs",
+  "version": "0.1.0",
+  "description": "Yeoman generator that fit with AlbaPasta needs (generate a basic webapp with framework choice, etc)",
   "license": "MIT",
   "main": "app/index.js",
   "repository": "VincentLoy/generator-albawebapp",

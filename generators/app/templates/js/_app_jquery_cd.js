@@ -4,10 +4,10 @@
  * Date : 01/08/2015
  * Author : Vincent Loy <vincent.loy1@gmail.com>
  */
-/*global window, document, simplyCountdown*/
-(function (window) {
+/*global window, document, simplyCountdown, $, jQuery*/
+(function ($) {
     'use strict';
-    document.addEventListener('DOMContentLoaded', function () {
+    $('document').ready(function () {
         var d = new Date(new Date().getTime() + 48 * 120 * 120 * 2000);
 
         $('.countdown').simplyCountdown({
@@ -16,4 +16,4 @@
             day: d.getDate()
         });
     });
-}(window));
+}(jQuery));
