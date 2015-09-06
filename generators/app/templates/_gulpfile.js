@@ -13,7 +13,10 @@
         less = require('gulp-less'),
         plumber = require('gulp-plumber'),
         uglify = require('gulp-uglify'),
+        minifyCSS = require('gulp-minify-css'),
         rename = require('gulp-rename'),
+        browserSync = require('browser-sync'),
+        sourcemaps = require('gulp-sourcemaps'),
         targetCSSDir = 'css',
         targetLESSDir = 'less',
         jsDir = 'js';
@@ -28,7 +31,21 @@
             .pipe(gulp.dest(targetCSSDir));
     });
 
-    gulp.task('compress', function () {
+    gulp.task('compress-css', function () {
+        return gulp.src(targetLESSDir + '/app.less')
+            .pipe(plumber())
+            .pipe(less({style: 'compressed'})
+                .on('error', gutil.log))
+            .pipe(sourcemaps.init())
+            .pipe(minifyCSS({compatibility: 'ie8'}))
+            .pipe(sourcemaps.write())
+            .pipe(rename({
+                extname: '.min.css'
+            }))
+            .pipe(gulp.dest(targetCSSDir));
+    });
+
+    gulp.task('compress-js', function () {
         return gulp.src(jsDir + '/app.js')
             .pipe(uglify({
                 preserveComments: 'some'
@@ -39,11 +56,24 @@
             .pipe(gulp.dest(jsDir));
     });
 
-    // Keep an eye on Less
-    gulp.task('watch', function () {
-        gulp.watch(targetLESSDir + '/**/*.less', ['css']);
+    gulp.task('serve', ['css', 'compress-js'], function () {
+        browserSync.init({
+            open: false,
+            server: {
+                baseDir: './'
+            }
+        });
+
+        gulp.watch(jsDir + '/app.js', ['compress-js']);
+        gulp.watch(targetLESSDir + '/**/*.less', ['css', 'compress-css']);
+        gulp.watch(['*.html', targetLESSDir + '/**/*.less', jsDir + '/app.js'])
+            .on('change', browserSync.reload);
     });
 
     // What tasks does running gulp trigger?
-    gulp.task('default', ['css', 'watch']);
+    gulp.task('default', ['css', 'serve']);
+
+    gulp.task('compress-css', ['compress-css']);
+    gulp.task('compress-js', ['compress-js']);
+    gulp.task('compress', ['compress-js', 'compress-css']);
 }());

@@ -1,0 +1,6 @@
+# IDE stuff
+.idea
+
+# npm & bower
+node_modules
+bower_components
